@@ -1,4 +1,4 @@
-package QueenWeightedByzantineAgreement;
+package WeightedByzantineAgreement.algorithm;
 
 /**
  * Created by apple on 11/8/15.

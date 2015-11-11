@@ -1,4 +1,4 @@
-package QueenWeightedByzantineAgreement;
+package WeightedByzantineAgreement.algorithm;
 import java.util.StringTokenizer;
 
 public class Messages {

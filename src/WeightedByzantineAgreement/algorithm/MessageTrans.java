@@ -1,13 +1,8 @@
-package QueenWeightedByzantineAgreement;
+package WeightedByzantineAgreement.algorithm;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.StringTokenizer;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.lang.Thread;
+import WeightedByzantineAgreement.algorithm.Messages;
+import WeightedByzantineAgreement.algorithm.WBA_instance;
+
 public class MessageTrans {
 
     private int myId;
@@ -15,9 +10,6 @@ public class MessageTrans {
    // private Socket[] sockets;
    // private BufferedReader[] DataIn;
   //  private PrintWriter[] DataOut;
- Process process[] = new Process[50];
-    ProcessBuilder pb =
-            StreamGobbler
 
     public MessageTrans(int ID, int num){
         myId = ID;

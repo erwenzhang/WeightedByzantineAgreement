@@ -1,4 +1,5 @@
-package QueenWeightedByzantineAgreement;
+package WeightedByzantineAgreement.algorithm;
+
 import java.util.ArrayList;
 import java.util.Collections;
 

@@ -1,6 +1,6 @@
-package QueenWeightedByzantineAgreement;
+package WeightedByzantineAgreement.algorithm;
 
-import com.sun.corba.se.pept.transport.ListenerThread;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.StringTokenizer;
 
 /**
@@ -21,21 +20,23 @@ public class WBA_instance {
     private int process_id;
     private int num_processes;
     private int port[];
+    private int tester_port;
 
 
 
-    public WBA_instance(int process_id,int num){
+    public WBA_instance(int process_id,int num, int tester_port){
         this.process_id = process_id;
         this.num_processes = num;
         for(int i = 0 ; i< num; i++){
             this.port[i] = 8000+i;
 
         }
+        this.tester_port = tester_port;
 
 
     }
     public static void main(String args[]){
-        WBA_instance wba_instance  = new WBA_instance(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+        WBA_instance wba_instance  = new WBA_instance(Integer.parseInt(args[0]),Integer.parseInt(args[1]),Integer.parseInt(args[2]));
         Queen_WBA msg_agreement = new Queen_WBA(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
         int flag = 0;
 
