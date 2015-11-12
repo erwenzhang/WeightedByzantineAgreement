@@ -22,7 +22,7 @@ public class MessageTrans {
     /*Message Format: myId, V */
     public  void sendMessages(int destId,String tag, String info){
         if(myId != destId){
-            Messages transInfo = new Messages(myId,tag,(byte)Integer.parseInt(info));
+            Messages transInfo = new Messages(myId,tag,info);
             WBA_instance.dataOut[destId].println(transInfo.formString());
             WBA_instance.dataOut[destId].flush();
         }

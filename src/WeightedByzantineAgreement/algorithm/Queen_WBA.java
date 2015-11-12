@@ -6,42 +6,42 @@ import java.util.Collections;
 import java.util.Random;
 
 
-public class Queen_WBA {
+public class Queen_WBA implements Runnable {
     private int numProc ;
     private final byte undecided = -1;
     private int myId;
-    private volatile byte V;
+    private volatile String V;
     private volatile ArrayList<Double> w;
     private volatile int anchor;
-    protected ArrayList<ArrayList<Byte>> Queue;
+    protected ArrayList<ArrayList<String>> Queue;
 
-    public Queen_WBA(int ID, int Process){
-
-        myId = ID;
-        numProc = Process;
-        w = new ArrayList<Double>(numProc);
-        Queue = new ArrayList<ArrayList<Byte>>(numProc);
+    public Queen_WBA(int ID, int numProc) {
+        //super(ID,numProc);
+        this.myId = ID;
+        this.numProc = numProc;
+        this.w = new ArrayList<Double>(numProc);
+        this.Queue = new ArrayList<ArrayList<String>>(numProc);
         Random rand = new Random();
-        V = (byte) rand.nextInt(2);
+        this.V = Integer.toString(rand.nextInt(2)) ;
         assignW();
-        anchor = assignAnchor();
+        this.anchor = assignAnchor();
     }
 
     public void procMsg(String line){
         System.out.println(line);
         Messages rcvMsg = new Messages();
         rcvMsg.parseMsg(line);
-        if(rcvMsg.retTag().equals("V")){
+        if(rcvMsg.retTag().equals("V")|| rcvMsg.retTag().equals("QueenValue")){
             synchronized(Queue.get(rcvMsg.retSrcId())){
                 Queue.get(rcvMsg.retSrcId()).add(rcvMsg.retInfo());
             }
 
         }
-        else if(rcvMsg.retTag().equals("QueenValue")){
-            synchronized(Queue.get(rcvMsg.retSrcId())){
-                Queue.get(rcvMsg.retSrcId()).add(rcvMsg.retInfo());
-            }
+        else if(rcvMsg.retTag().equals("start")){
+           start();
         }
+
+
     }
 
     public int assignAnchor(){
@@ -65,17 +65,22 @@ public class Queen_WBA {
         }
     }
 
-    public void processing(){
+    public void start(){
+        System.out.print("start agreement "+myId);
+        new Thread(this).start();
+    }
+
+    public void run(){
         for(int i = 0; i<anchor; i++){
             double s0 = 0.0, s1 =0.0;
             double myWeight;
-            byte myValue;
+            String myValue;
             MessageTrans trans = new MessageTrans(myId,numProc);
 /*first phase*/
 		 /*send message to all other process except myself*/
             if(w.get(myId) > 0){
                 for(int j = 0; j < numProc; j++){
-                    trans.sendMessages(j,"V", Integer.toString(V));
+                    trans.sendMessages(j,"V", V);
                 }
             }
 
@@ -84,7 +89,7 @@ public class Queen_WBA {
             for(int j= 0; j<numProc; j++){
                 if(w.get(j)>0){
                     boolean receiveMsg = false;
-                    byte getValue = -1;
+                    String getValue = "-1";
                     while(!receiveMsg){
                         synchronized(Queue.get(j)){
                             if(!Queue.get(j).isEmpty()){
@@ -95,10 +100,10 @@ public class Queen_WBA {
                         }
 
                     }
-                    if(getValue == 1){
+                    if(getValue == "1"){
                         s1 = s1 + w.get(j);
                     }
-                    if(getValue == 0){
+                    if(getValue == "0"){
                         s0 = s0 + w.get(j);
                     }
                 }
@@ -107,20 +112,20 @@ public class Queen_WBA {
 
 	      /*update value*/
             if(s1 >= 1.0/2.0){
-                myValue = 1;
+                myValue = "1";
                 myWeight = s1;
             }
             else {
-                myValue = 0;
+                myValue = "0";
                 myWeight = s0;
             }
 
 /*second phase*/
-            byte QueenValue = -1;
+            String QueenValue = "-1";
             if(i == myId){
                 V = myValue;
                 for(int j = 0; j < numProc; j++){
-                    trans.sendMessages(j,"QueenValue", Integer.toString(V));
+                    trans.sendMessages(j,"QueenValue", V);
                 }
             }
             else{
@@ -141,7 +146,8 @@ public class Queen_WBA {
                 }
                 else V = QueenValue;
             }
-            System.out.println("Final V = "+Integer.toString(V));
+            System.out.println("Final V = "+V);
         }
     }
+
 }

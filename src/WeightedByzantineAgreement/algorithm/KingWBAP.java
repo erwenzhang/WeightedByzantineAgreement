@@ -6,20 +6,20 @@ import java.util.Random;
 
 public class KingWBAP {
     private int numProc ;
-    private final byte undecided = -1;
+    private final String undecided = "-1";
     private int myId;
-    private volatile byte V;
+    private volatile String V;
     private volatile ArrayList<Double> w;
     private volatile int anchor;
-    protected ArrayList<ArrayList<Byte>> Queue;
+    protected ArrayList<ArrayList<String>> Queue;
 
     public KingWBAP(int ID, int Process){
         myId = ID;
         numProc = Process;
         w = new ArrayList<Double>(numProc);
-        Queue = new ArrayList<ArrayList<Byte>>(numProc);
+        Queue = new ArrayList<ArrayList<String>>(numProc);
         Random rand = new Random();
-        V = (byte) rand.nextInt(2);
+        V = Integer.toString(rand.nextInt(2));
         assignW();
         anchor = assignAnchor();
     }
@@ -74,7 +74,7 @@ public class KingWBAP {
             if(w.get(myId) > 0){
 				 /*send message to all other process except myself*/
                 for(int j = 0; j < numProc; j++){
-                    trans.sendMessages(j, "V", Integer.toString(V));
+                    trans.sendMessages(j, "V", V);
                 }
             }
 		     /*receive message*/
@@ -82,7 +82,7 @@ public class KingWBAP {
             for(int j= 0; j<numProc; j++){
                 if(w.get(j)>0){
                     boolean receiveMsg = false;
-                    byte getValue = -1;
+                    String getValue = "-1";
                     while(!receiveMsg){
                         synchronized(Queue.get(j)){
                             if(!Queue.get(j).isEmpty()){
@@ -93,10 +93,10 @@ public class KingWBAP {
                         }
 
                     }
-                    if(getValue == 1){
+                    if(getValue == "1"){
                         s1 = s1 + w.get(j);
                     }
-                    if(getValue == 0){
+                    if(getValue == "0"){
                         s0 = s0 + w.get(j);
                     }
                 }
@@ -105,10 +105,10 @@ public class KingWBAP {
 
 		     /*update value*/
             if(s0 >= 2.0/3.0){
-                V = 0;
+                V = "0";
             }
             else if(s1 >= 2.0/3.0) {
-                V = 1;
+                V = "1";
             }
             else V = undecided;
 
@@ -119,7 +119,7 @@ public class KingWBAP {
 				 /*send message to all other process except myself*/
             if(w.get(myId) > 0){
                 for(int j = 0; j < numProc; j++){
-                    trans.sendMessages(j,"V", Integer.toString(V));
+                    trans.sendMessages(j,"V", V);
                 }
             }
 				 /*receive message*/
@@ -127,7 +127,7 @@ public class KingWBAP {
             for(int j= 0; j<numProc; j++){
                 if(w.get(j)>0){
                     boolean receiveMsg = false;
-                    byte getValue = -1;
+                    String getValue = "-1";
                     while(!receiveMsg){
                         synchronized(Queue.get(j)){
                             if(!Queue.get(j).isEmpty()){
@@ -137,10 +137,10 @@ public class KingWBAP {
                             }
                         }
                     }
-                    if(getValue == 1){
+                    if(getValue == "1"){
                         s1 = s1 + w.get(j);
                     }
-                    if(getValue == 0){
+                    if(getValue == "0"){
                         s0 = s0 + w.get(j);
                     }
                     else su = su + w.get(j);
@@ -149,11 +149,11 @@ public class KingWBAP {
 
 				/*update value*/
             if(s0 > 1.0/3.0){
-                V = 0;
+                V = "0";
                 myWeight = s0;
             }
             else if(s1 > 1.0/3.0) {
-                V = 1;
+                V = "1";
                 myWeight = s1;
             }
             else if(su > 1.0/3.0) {
@@ -164,12 +164,12 @@ public class KingWBAP {
 
             if(i == myId){
                 for(int j = 0; j < numProc; j++){
-                    trans.sendMessages(j,"KingValue", Integer.toString(V));
+                    trans.sendMessages(j,"KingValue", V);
                 }
             }
             else{
                 boolean receiveMsg = false;
-                byte kingValue = -1;
+                String kingValue = "-1";
                 while(!receiveMsg){
                     synchronized(Queue.get(i)){
                         if(!Queue.get(i).isEmpty()){
@@ -182,13 +182,13 @@ public class KingWBAP {
                 }
 
                 if((V == undecided) || (myWeight < (2.0/3.0)) ){
-                    if(kingValue == undecided) V = 1;
+                    if(kingValue == undecided) V = "1";
                     else V = kingValue;
                 }
             }
         }
 
-        System.out.println("Final V = "+Integer.toString(V));
+        System.out.println("Final V = "+V);
     }
 }
 

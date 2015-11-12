@@ -4,10 +4,10 @@ import java.util.StringTokenizer;
 public class Messages {
     private int  SourceId;
     private String tag;
-    private Byte Info;
+    private String Info;
 
 
-    public Messages(int source, String tag, Byte info){
+    public Messages(int source, String tag, String info){
         this.SourceId = source;
         this.tag = tag;
         this.Info = info;
@@ -23,20 +23,20 @@ public class Messages {
         return tag;
     }
 
-    public Byte retInfo(){
+    public String retInfo(){
         return Info;
     }
 
     public String formString(){
         String transMsg;
-        transMsg = Integer.toString(SourceId)+" "+tag+" "+Integer.toString(Info);
+        transMsg = Integer.toString(SourceId)+" "+tag+" "+Info;
         return transMsg;
     }
     public void parseMsg(String line){
         StringTokenizer token = new StringTokenizer (line);
         this.SourceId = Integer.parseInt(token.nextToken());
         this.tag  = token.nextToken();
-        this.Info = (byte)Integer.parseInt(token.nextToken());
+        this.Info = token.nextToken();
     }
 
 }
