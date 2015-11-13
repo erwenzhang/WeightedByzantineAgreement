@@ -16,6 +16,7 @@ public class ToTesterChannel extends Thread {
         while(true){
             String str;
             try{
+                System.out.println(" before subprocesses started ");
                 str = WBA_instance.dInTester.readLine();
                 msg_agreement.procMsg(str);
 

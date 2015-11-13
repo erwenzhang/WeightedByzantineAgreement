@@ -39,6 +39,7 @@ public class ConnectThread extends Thread {
     public void run(){
         try {
             ServerSocket serSocket = new ServerSocket(port);
+            System.out.println("start waiting for hello");
 
             while(true){
 
@@ -47,6 +48,7 @@ public class ConnectThread extends Thread {
                 String read = data.readLine();
                 MessageTest msgIn = new MessageTest();
                 msgIn.parseMsg(read);
+                System.out.println("receive msg from processes "+msgIn.retTag());
                 if(msgIn.retTag() == "hello"){
                     setSocket(msgIn.retSrcId(),s);
                     dataOut[msgIn.retSrcId()] = new PrintWriter(s.getOutputStream());

@@ -1,6 +1,8 @@
 package WeightedByzantineAgreement.algorithm;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import java.util.Random;
@@ -11,7 +13,7 @@ public class Queen_WBA implements Runnable {
     private final byte undecided = -1;
     private int myId;
     private volatile String V;
-    private volatile ArrayList<Double> w;
+    private volatile double[] w;
     private volatile int anchor;
     protected ArrayList<ArrayList<String>> Queue;
 
@@ -19,7 +21,7 @@ public class Queen_WBA implements Runnable {
         //super(ID,numProc);
         this.myId = ID;
         this.numProc = numProc;
-        this.w = new ArrayList<Double>(numProc);
+       this.w = new double[numProc];
         this.Queue = new ArrayList<ArrayList<String>>(numProc);
         Random rand = new Random();
         this.V = Integer.toString(rand.nextInt(2)) ;
@@ -47,10 +49,10 @@ public class Queen_WBA implements Runnable {
     public int assignAnchor(){
         double bound = 0.0;
         int Anchor = 0;
-        ArrayList<Double> tmp_w = new ArrayList<Double>(w);
-        Collections.sort(tmp_w);
+        double[] tmp_w = w.clone();
+        Arrays.sort(tmp_w);
         for(int i = numProc-1; i > -1 ; i--){
-            bound = bound + tmp_w.get(i);
+            bound = bound + tmp_w[i];
             if(bound > 1.0/4.0){
                 Anchor= numProc - i;
                 break;
@@ -61,7 +63,7 @@ public class Queen_WBA implements Runnable {
 
     public void assignW(){
         for(int i = 0; i< numProc; i++){
-            w.set(i, ((double)1/(double)numProc));
+            w[i]= ((double)1/(double)numProc);
         }
     }
 
@@ -84,7 +86,7 @@ public class Queen_WBA implements Runnable {
             MessageTrans trans = new MessageTrans(myId,numProc);
 /*first phase*/
 		 /*send message to all other process except myself*/
-            if(w.get(myId) > 0){
+            if(w[myId] > 0){
                 for(int j = 0; j < numProc; j++){
                     trans.sendMessages(j,"V", V);
                 }
@@ -93,7 +95,7 @@ public class Queen_WBA implements Runnable {
 		 /*receive message*/
             Queue.get(myId).add(V);
             for(int j= 0; j<numProc; j++){
-                if(w.get(j)>0){
+                if(w[j]>0){
                     boolean receiveMsg = false;
                     String getValue = "-1";
                     while(!receiveMsg){
@@ -107,10 +109,10 @@ public class Queen_WBA implements Runnable {
 
                     }
                     if(getValue == "1"){
-                        s1 = s1 + w.get(j);
+                        s1 = s1 + w[j];
                     }
                     if(getValue == "0"){
-                        s0 = s0 + w.get(j);
+                        s0 = s0 + w[j];
                     }
                 }
 

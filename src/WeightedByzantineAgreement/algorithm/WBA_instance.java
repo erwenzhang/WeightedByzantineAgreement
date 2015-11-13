@@ -33,8 +33,10 @@ public class WBA_instance {
         this.process_id = process_id;
         this.num_processes = num;
         this.myport = 8000+process_id;
+        this.port = new int[num];
         for(int i = 0 ; i< num; i++){
             this.port[i] = 8000+i;
+            System.out.println("port:" + Integer.toString(this.port[i]));
 
         }
         this.tester_port = tester_port;
@@ -42,6 +44,7 @@ public class WBA_instance {
 
     }
     public static void main(String[] args) throws Exception{
+        System.out.println(" before subprocesses started "+args[0]+" "+args[1]+" "+args[2]);
         WBA_instance wba_instance  = new WBA_instance(Integer.parseInt(args[0]),Integer.parseInt(args[1]),Integer.parseInt(args[2]));
         Queen_WBA msg_agreement = new Queen_WBA(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
        // int flag = 0;
@@ -86,6 +89,8 @@ public class WBA_instance {
 
         for (int i =  wba_instance.process_id+ 1; i < wba_instance.num_processes; i++) {
             Socket s = null;
+            System.out.println("subprocesses started");
+            System.out.println(i);
             //try to connect to process i, until the connection is made
             while(s == null ){
                 try{
@@ -94,7 +99,8 @@ public class WBA_instance {
                     PrintWriter dOut = new PrintWriter(s.getOutputStream());
                     BufferedReader dIn = new BufferedReader(new
                             InputStreamReader(s.getInputStream()));
-                    dOut.println(wba_instance.process_id + " " + "say hello" + " " + null);
+                    dOut.println(wba_instance.process_id + " " + "say hello" + " " + "null");
+                    System.out.println("say hello");
                     dOut.flush();
                     dataIn[i] = dIn;
                     dataOut[i] = dOut;

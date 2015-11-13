@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 public class Tester {
 
-    private static final int num_processes = 50;
+    private static final int num_processes = 1;
     private static String current_dir = "/Users/apple/Documents/myjava/QueenWeightedByzantineAgreement/bin";
 
     private static int tester_port = 7999;
@@ -116,16 +116,26 @@ public class Tester {
     }
 
     private static void launch_processes(){
+        File log = new File("log.txt");
         try {
             for(int i = 0;i<num_processes;i++){
+          //  int i = 0;
+                System.out.println("start launching process "+i);
                 ProcessBuilder process_builder = new ProcessBuilder("java","WeightedByzantineAgreement/algorithm/WBA_instance",Integer.toString(i),Integer.toString(num_processes),Integer.toString(tester_port));
-                process_builder.directory(new File(current_dir));
-                process_builder.redirectErrorStream(true);
-                processes[i] = process_builder.start();
-                File log = new File("log");
-                process_builder.redirectOutput(ProcessBuilder.Redirect.appendTo(log));
+            //   ProcessBuilder process_builder = new ProcessBuilder( "/Users/apple/Documents/myjava/test.bat");
 
-            }
+                process_builder.directory(new File(current_dir));
+
+
+                process_builder.redirectErrorStream(true);
+
+                process_builder.redirectOutput(ProcessBuilder.Redirect.appendTo(log));
+                processes[i] = process_builder.start();
+
+               // StreamGobbler sg = new StreamGobbler(i, processes[i].getInputStream());
+               // sg.start();
+
+          }
         }catch (Exception e1){
             e1.printStackTrace();
         }
