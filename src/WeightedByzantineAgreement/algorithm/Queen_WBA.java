@@ -70,6 +70,12 @@ public class Queen_WBA implements Runnable {
         new Thread(this).start();
     }
 
+    private void decide(String value){
+       WBA_instance.dOutTester.println(Integer.toString(myId)+" "+"decide"+" "+value);
+        WBA_instance.dOutTester.flush();
+    }
+
+
     public void run(){
         for(int i = 0; i<anchor; i++){
             double s0 = 0.0, s1 =0.0;
@@ -148,6 +154,7 @@ public class Queen_WBA implements Runnable {
             }
             System.out.println("Final V = "+V);
         }
+        decide(V);
     }
 
 }

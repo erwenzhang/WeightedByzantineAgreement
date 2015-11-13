@@ -20,7 +20,7 @@ public class ConnectThread extends Thread {
     static BufferedReader[] dataIn;
     static PrintWriter[] dataOut;
     private Socket[] socket;
-    static BlockingQueue<MessageTest> list;
+    private BlockingQueue<MessageTest> list;
 
 
     public ConnectThread(int num, int myPort){
@@ -47,10 +47,11 @@ public class ConnectThread extends Thread {
                 String read = data.readLine();
                 MessageTest msgIn = new MessageTest();
                 msgIn.parseMsg(read);
-                if(msgIn.retTag() == "Initiating"){
+                if(msgIn.retTag() == "hello"){
                     setSocket(msgIn.retSrcId(),s);
                     dataOut[msgIn.retSrcId()] = new PrintWriter(s.getOutputStream());
-                    new ThreadChannelTest(data).start();
+                 //   dataIn[msgIn.retSrcId()] = data;
+                    new ToProcessChannel(data,list).start();
                 }
 
             }
@@ -59,6 +60,19 @@ public class ConnectThread extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+
+    /*Message Format: myId, V */
+    public  void sendMessages(int destId,String tag, String info){
+        MessageTest transInfo = new MessageTest(-1,tag,info);
+        dataOut[destId].println(transInfo.formString());
+        dataOut[destId].flush();
+
+    }
+
+    public MessageTest getMessage() throws InterruptedException{
+        return list.poll(2, TimeUnit.SECONDS);
     }
 
 

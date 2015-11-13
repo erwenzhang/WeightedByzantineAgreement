@@ -14,8 +14,11 @@ import java.util.StringTokenizer;
  * Created by apple on 11/8/15.
  */
 public class WBA_instance {
-    static PrintWriter[] dataOut;
-    static BufferedReader[] dataIn;
+    protected static PrintWriter[] dataOut;
+    protected static BufferedReader[] dataIn;
+    protected static PrintWriter dOutTester;
+    protected static BufferedReader dInTester;
+
 
     private int process_id;
     private int num_processes;
@@ -105,12 +108,14 @@ public class WBA_instance {
         }
 
         Socket testSocket = new Socket(local_host,wba_instance.tester_port);
-        PrintWriter dOutTester = new PrintWriter(testSocket.getOutputStream());
-        BufferedReader dInTester = new BufferedReader(new InputStreamReader(testSocket.getInputStream()));
-        dOutTester.println(wba_instance.process_id+" "+"hello"+" "+"null");
-        new ToTesterChannel(wba_instance.process_id).start();
-
-       // if(flag == wba_instance.num_processes-1)
+        dOutTester = new PrintWriter(testSocket.getOutputStream());
+        dInTester = new BufferedReader(new InputStreamReader(testSocket.getInputStream()));
+        dOutTester.println(Integer.toString(wba_instance.process_id)+" "+"hello"+" "+"null");
+        dOutTester.flush();
+        new ToTesterChannel(wba_instance.process_id,msg_agreement).start();
+        dOutTester.println(Integer.toString(wba_instance.process_id)+" "+"ready"+" "+"null");
+        dOutTester.flush();
+        // if(flag == wba_instance.num_processes-1)
       //  new ThreadProcess(msg_agreement).start();
 
 

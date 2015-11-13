@@ -10,13 +10,17 @@ import java.io.IOException;
 import java.net.SocketException;
         import java.net.SocketTimeoutException;
         import java.util.*;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 
 public class ToProcessChannel extends Thread {
     private  BufferedReader message;
+    private BlockingQueue<MessageTest> queue;
 
 
-    public ToProcessChannel(BufferedReader data){
+    public ToProcessChannel(BufferedReader data,BlockingQueue<MessageTest> queue){
         this.message = data;
+        this.queue = queue;
     }
 
     public void run() {
@@ -27,7 +31,7 @@ public class ToProcessChannel extends Thread {
                 String s = message.readLine();
                 MessageTest msgIn = new MessageTest();
                 msgIn.parseMsg(s);
-                ConnectThread.list.put(msgIn.formMsg());
+                queue.put(msgIn.formMsg());
             } catch (SocketException e) {
                 return;
             } catch (IOException e) {

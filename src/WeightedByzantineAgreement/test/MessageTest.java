@@ -6,10 +6,10 @@ import java.util.StringTokenizer;
 public class MessageTest {
     private int  SourceId;
     private String tag;
-    private Byte Info;
+    private String Info;
 
 
-    public MessageTest(int source, String tagIn, Byte info){
+    public MessageTest(int source, String tagIn, String info){
         SourceId = source;
         tag = tagIn;
         Info = info;
@@ -25,20 +25,20 @@ public class MessageTest {
         return tag;
     }
 
-    public Byte retInfo(){
+    public String retInfo(){
         return Info;
     }
 
     public String formString(){
         String transMsg;
-        transMsg = Integer.toString(SourceId)+" "+tag+" "+Integer.toString(Info);
+        transMsg = Integer.toString(SourceId)+" "+tag+" "+Info;
         return transMsg;
     }
     public void parseMsg(String line){
         StringTokenizer token = new StringTokenizer (line);
         SourceId = Integer.parseInt(token.nextToken());
         tag  = token.nextToken();
-        Info = (byte)Integer.parseInt(token.nextToken());
+        Info = token.nextToken();
     }
 
     public MessageTest formMsg(){

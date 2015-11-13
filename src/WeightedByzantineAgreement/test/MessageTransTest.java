@@ -18,16 +18,6 @@ public class MessageTransTest {
 
     }
 
-    /*Message Format: myId, V */
-    public  void sendMessages(int destId,String tag, String info){
-        MessageTest transInfo = new MessageTest(myId,tag,(byte)Integer.parseInt(info));
-        ConnectThread.dataOut[destId].println(transInfo.formString());
-        ConnectThread.dataOut[destId].flush();
 
-    }
-
-    public MessageTest getMessage() throws InterruptedException{
-        return ConnectThread.list.poll(2, TimeUnit.SECONDS);
-    }
 
 }
