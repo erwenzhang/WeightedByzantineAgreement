@@ -28,13 +28,14 @@ public class ConnectThread extends Thread {
         this.numProcess = num;
         this.dataIn = new BufferedReader[num];
         this.dataOut = new PrintWriter[num];
+
         this.list = new LinkedBlockingQueue<MessageTest>();
         this.start();
 
     }
-    public void setSocket(int Id, Socket s){
-        socket[Id] = s;
-    }
+  //  public void setSocket(int Id, Socket s){
+  //      socket[Id] = s;
+ //   }
 
     public void run(){
         try {
@@ -49,11 +50,10 @@ public class ConnectThread extends Thread {
                 MessageTest msgIn = new MessageTest();
                 msgIn.parseMsg(read);
                 System.out.println("receive msg from processes "+msgIn.retTag());
-                if(msgIn.retTag() == "hello"){
-                    setSocket(msgIn.retSrcId(),s);
+                if(msgIn.retTag().equals("hello")){
                     dataOut[msgIn.retSrcId()] = new PrintWriter(s.getOutputStream());
-                 //   dataIn[msgIn.retSrcId()] = data;
-                    new ToProcessChannel(data,list).start();
+                    new ToProcessChannel(data,list);
+
                 }
 
             }
@@ -74,7 +74,7 @@ public class ConnectThread extends Thread {
     }
 
     public MessageTest getMessage() throws InterruptedException{
-        return list.poll(2, TimeUnit.SECONDS);
+        return list.poll(5, TimeUnit.SECONDS);
     }
 
 

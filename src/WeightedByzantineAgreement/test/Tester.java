@@ -8,7 +8,7 @@ import java.util.ArrayList;
  */
 public class Tester {
 
-    private static final int num_processes = 1;
+    private static final int num_processes = 9;
     private static String current_dir = "/Users/apple/Documents/myjava/QueenWeightedByzantineAgreement/bin";
 
     private static int tester_port = 7999;
@@ -57,17 +57,19 @@ public class Tester {
 
         for(int i = 0; i<num_processes;i++){
             connectionManager.sendMessages(i, "start", "null");
+            System.out.println("send start to subprocess");
         }
 
         System.out.println("Waiting for decide messages from all launched processes.");
         int DecideReceived =  0;
         ArrayList<Integer> decisions = new ArrayList<Integer>();
-        while((DecideReceived<num_processes)&&stopwatch.getElapsedTime()<wait_max){
+        while((DecideReceived<num_processes)){
             MessageTest msg = connectionManager.getMessage();
             if(msg!=null){
                 if(msg.retTag().equals("decide")){
                     DecideReceived++;
                     decisions.add(Integer.parseInt(msg.retInfo()));
+                    System.out.println("Received decide from "+Integer.toString(msg.retSrcId()));
                 }
             }
         }
@@ -83,8 +85,10 @@ public class Tester {
 
         if(decisions.size() > 0) {
             int first = decisions.get(0);
+
             boolean match = true;
             for(int i = 1; i < decisions.size(); i++) {
+             //   System.out.println("Received decide from "+Integer.toString(i));
                 if(decisions.get(i) != first) {
                     match = false;
                     break;
@@ -125,10 +129,7 @@ public class Tester {
             //   ProcessBuilder process_builder = new ProcessBuilder( "/Users/apple/Documents/myjava/test.bat");
 
                 process_builder.directory(new File(current_dir));
-
-
                 process_builder.redirectErrorStream(true);
-
                 process_builder.redirectOutput(ProcessBuilder.Redirect.appendTo(log));
                 processes[i] = process_builder.start();
 

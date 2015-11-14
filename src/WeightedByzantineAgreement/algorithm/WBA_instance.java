@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.util.StringTokenizer;
 
 /**
- * Created by apple on 11/8/15.
+ * Created by wenwen on 11/8/15.
  */
 public class WBA_instance {
     protected static PrintWriter[] dataOut;
@@ -36,27 +36,34 @@ public class WBA_instance {
         this.port = new int[num];
         for(int i = 0 ; i< num; i++){
             this.port[i] = 8000+i;
-            System.out.println("port:" + Integer.toString(this.port[i]));
+          //  System.out.println("port:" + Integer.toString(this.port[i]));
 
         }
         this.tester_port = tester_port;
+        dataOut = new PrintWriter[num_processes];
+        dataIn = new BufferedReader[num_processes];
 
 
     }
     public static void main(String[] args) throws Exception{
-        System.out.println(" before subprocesses started "+args[0]+" "+args[1]+" "+args[2]);
+      //  System.out.println("before subprocesses started "+args[0]+" "+args[1]+" "+args[2]);
         WBA_instance wba_instance  = new WBA_instance(Integer.parseInt(args[0]),Integer.parseInt(args[1]),Integer.parseInt(args[2]));
-        Queen_WBA msg_agreement = new Queen_WBA(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+     //   Queen_WBA msg_agreement = new Queen_WBA(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
        // int flag = 0;
+        KingWBAP msg_agreement = new KingWBAP(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
 
 
 
             try {
 
                 ServerSocket listener = new ServerSocket(wba_instance.myport);
+               // System.out.println(Integer.toString(wba_instance.process_id)+" listen to lower process");
                 for(int i = 0; i < wba_instance.process_id; i++) {
+                    //System.out.println(wba_instance.myport);
+
+
                     Socket s = listener.accept();
-                    s.setSoTimeout(15*1000);
+                  //  s.setSoTimeout(15*1000);
                     BufferedReader dIn = new BufferedReader(
                             new InputStreamReader(s.getInputStream()));
                     PrintWriter dOut = new PrintWriter(s.getOutputStream());
@@ -64,8 +71,9 @@ public class WBA_instance {
                     String getLine = dIn.readLine();
                     StringTokenizer st = new StringTokenizer(getLine);
                     int fromProcessId = Integer.parseInt(st.nextToken());
+                    System.out.println(Integer.toString(wba_instance.process_id)+" has listened to lower process "+Integer.toString(fromProcessId));
                     String round = st.nextToken();
-                    if (round.equals("say hello")) {
+                    if (round.equals("hello1")) {
 
                         dataOut[fromProcessId] = dOut;
                         dataIn[fromProcessId] = dIn;
@@ -74,7 +82,7 @@ public class WBA_instance {
 
                     }
 
-                    new ThreadChannel(fromProcessId,msg_agreement).start();
+                    new ThreadChannel(wba_instance.process_id,fromProcessId,msg_agreement).start();
                     //flag = flag + 1;
 
                 }
@@ -89,26 +97,27 @@ public class WBA_instance {
 
         for (int i =  wba_instance.process_id+ 1; i < wba_instance.num_processes; i++) {
             Socket s = null;
-            System.out.println("subprocesses started");
-            System.out.println(i);
+          //  System.out.println(Integer.toString(wba_instance.process_id)+" try to socket to process " + Integer.toString(i));
+           // System.out.println(i);
             //try to connect to process i, until the connection is made
             while(s == null ){
                 try{
                     s = new Socket(local_host, 8000 + i);
-                    s.setSoTimeout(15*1000);
+                   // s.setSoTimeout(15*1000);
                     PrintWriter dOut = new PrintWriter(s.getOutputStream());
                     BufferedReader dIn = new BufferedReader(new
                             InputStreamReader(s.getInputStream()));
-                    dOut.println(wba_instance.process_id + " " + "say hello" + " " + "null");
-                    System.out.println("say hello");
+                    dOut.println(wba_instance.process_id + " " + "hello1" + " " + "null");
+               //     System.out.println("hello1");
                     dOut.flush();
                     dataIn[i] = dIn;
                     dataOut[i] = dOut;
-                    new ThreadChannel(i,msg_agreement).start();
+                    new ThreadChannel(wba_instance.process_id,i,msg_agreement).start();
                  //   flag = flag + 1;
 
                 } catch(Exception e)
-                {e.printStackTrace();}
+                {e.printStackTrace();
+                System.out.println(Integer.toString(wba_instance.process_id)+" failed to socket to process " + Integer.toString(i));}
             }
 
         }
@@ -121,6 +130,7 @@ public class WBA_instance {
         new ToTesterChannel(wba_instance.process_id,msg_agreement).start();
         dOutTester.println(Integer.toString(wba_instance.process_id)+" "+"ready"+" "+"null");
         dOutTester.flush();
+
         // if(flag == wba_instance.num_processes-1)
       //  new ThreadProcess(msg_agreement).start();
 

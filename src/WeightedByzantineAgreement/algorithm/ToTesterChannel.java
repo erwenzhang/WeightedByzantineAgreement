@@ -7,8 +7,9 @@ import java.net.SocketTimeoutException;
  */
 public class ToTesterChannel extends Thread {
     private int process_id;
-    private Queen_WBA msg_agreement;
-    public ToTesterChannel(int process_id,Queen_WBA msg_agreement){
+    //private Queen_WBA msg_agreement;
+    private KingWBAP msg_agreement;
+    public ToTesterChannel(int process_id,KingWBAP msg_agreement){
         this.process_id = process_id;
         this.msg_agreement = msg_agreement;
     }
@@ -16,8 +17,9 @@ public class ToTesterChannel extends Thread {
         while(true){
             String str;
             try{
-                System.out.println(" before subprocesses started ");
+          //      System.out.println("listen to tester channel ");
                 str = WBA_instance.dInTester.readLine();
+            //    System.out.println(str);
                 msg_agreement.procMsg(str);
 
 

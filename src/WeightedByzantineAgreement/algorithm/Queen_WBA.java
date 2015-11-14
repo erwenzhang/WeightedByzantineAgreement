@@ -9,8 +9,8 @@ import java.util.Random;
 
 
 public class Queen_WBA implements Runnable {
-    private int numProc ;
-    private final byte undecided = -1;
+    private int numProc;
+  //  private final byte undecided = -1;
     private int myId;
     private volatile String V;
     private volatile double[] w;
@@ -23,6 +23,9 @@ public class Queen_WBA implements Runnable {
         this.numProc = numProc;
        this.w = new double[numProc];
         this.Queue = new ArrayList<ArrayList<String>>(numProc);
+        for(int i = 0; i < numProc; ++i) {
+            Queue.add(new ArrayList<String>());
+        }
         Random rand = new Random();
         this.V = Integer.toString(rand.nextInt(2)) ;
         assignW();
@@ -68,11 +71,12 @@ public class Queen_WBA implements Runnable {
     }
 
     public void start(){
-        System.out.print("start agreement "+myId);
+        System.out.println("start agreement " + myId);
         new Thread(this).start();
     }
 
     private void decide(String value){
+        System.out.println(myId+" decide sent!!!");
        WBA_instance.dOutTester.println(Integer.toString(myId)+" "+"decide"+" "+value);
         WBA_instance.dOutTester.flush();
     }
@@ -108,10 +112,10 @@ public class Queen_WBA implements Runnable {
                         }
 
                     }
-                    if(getValue == "1"){
+                    if(getValue.equals("1") ){
                         s1 = s1 + w[j];
                     }
-                    if(getValue == "0"){
+                    if(getValue.equals("0")){
                         s0 = s0 + w[j];
                     }
                 }
@@ -127,6 +131,8 @@ public class Queen_WBA implements Runnable {
                 myValue = "0";
                 myWeight = s0;
             }
+
+            System.out.println(myId+" my value "+myValue+" my weight "+myWeight);
 
 /*second phase*/
             String QueenValue = "-1";
@@ -153,8 +159,10 @@ public class Queen_WBA implements Runnable {
                     V = myValue;
                 }
                 else V = QueenValue;
+
+             //   System.out.println(myId+" my value "+ V+" phase 2");
             }
-            System.out.println("Final V = "+V);
+            System.out.println(myId+ " Final V = "+V + " anchor= "+ i);
         }
         decide(V);
     }

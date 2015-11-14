@@ -21,6 +21,7 @@ public class ToProcessChannel extends Thread {
     public ToProcessChannel(BufferedReader data,BlockingQueue<MessageTest> queue){
         this.message = data;
         this.queue = queue;
+        this.start();
     }
 
     public void run() {
@@ -31,6 +32,8 @@ public class ToProcessChannel extends Thread {
                 String s = message.readLine();
                 MessageTest msgIn = new MessageTest();
                 msgIn.parseMsg(s);
+                System.out.println(" listen to process channel "+Integer.toString(msgIn.retSrcId()));
+               // System.out.println(msgIn.retTag());
                 queue.put(msgIn.formMsg());
             } catch (SocketException e) {
                 return;
