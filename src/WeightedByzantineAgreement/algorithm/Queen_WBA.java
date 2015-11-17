@@ -16,6 +16,7 @@ public class Queen_WBA implements Runnable {
     private volatile double[] w;
     private volatile int anchor;
     protected ArrayList<ArrayList<String>> Queue;
+    private boolean type;
 
     public Queen_WBA(int ID, int numProc) {
         //super(ID,numProc);
@@ -28,7 +29,7 @@ public class Queen_WBA implements Runnable {
         }
         Random rand = new Random();
         this.V = Integer.toString(rand.nextInt(2)) ;
-        assignW();
+       // assignW();
         this.anchor = assignAnchor();
     }
 
@@ -44,6 +45,19 @@ public class Queen_WBA implements Runnable {
         }
         else if(rcvMsg.retTag().equals("start")){
            start();
+        }
+        else if(rcvMsg.retTag().equals("type")){
+            this.type = Boolean.parseBoolean(rcvMsg.retInfo());
+        }
+        else if(rcvMsg.retTag().equals("weight")){
+            String weight = rcvMsg.retInfo();
+            weight = weight.substring(0,weight.length()-1);
+            int count = 0;
+            for (String tmp:weight.split(",")){
+                this.w[count] = Double.parseDouble(tmp);
+                count++;
+            }
+
         }
 
 
@@ -83,6 +97,7 @@ public class Queen_WBA implements Runnable {
 
 
     public void run(){
+        if(type){
         for(int i = 0; i<anchor; i++){
             double s0 = 0.0, s1 =0.0;
             double myWeight;
@@ -164,7 +179,20 @@ public class Queen_WBA implements Runnable {
             }
             System.out.println(myId+ " Final V = "+V + " anchor= "+ i);
         }
+       // if(type)
         decide(V);
+        }
+
+        else
+        {
+            int i = (int)Math.random()*2;
+            falty_process(i);
+
+        }
+    }
+
+    private static void falty_process(int i){
+
     }
 
 }

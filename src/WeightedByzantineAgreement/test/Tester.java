@@ -1,7 +1,11 @@
 package WeightedByzantineAgreement.test;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by wenwen on 11/10/15.
@@ -10,9 +14,13 @@ public class Tester {
 
     private static final int num_processes = 9;
     private static String current_dir = "/Users/apple/Documents/myjava/QueenWeightedByzantineAgreement/bin";
+    private static String cp ="/Users/apple/Documents/myjava/QueenWeightedByzantineAgreement/failure_probability.txt";
 
     private static int tester_port = 7999;
     private static int wait_max = 30;
+    private static int[] weight;
+    private static boolean[] type;
+    private static double[] failure_probability;
 
     static Stopwatch stopwatch = new Stopwatch();
 
@@ -20,6 +28,10 @@ public class Tester {
 
     public static void main(String[] args) throws Exception{
          processes = new Process[num_processes];
+         weight = new int[num_processes];
+        type = new boolean[num_processes];
+        failure_probability = new double[num_processes];
+
         System.out.println("Start launching " + num_processes + " WBA processes.");
          launch_processes();
 
@@ -28,6 +40,11 @@ public class Tester {
 
 
         System.out.println("Finished launching " + num_processes + " WBA processes.");
+
+        // assign_type, assign_weight,
+        assign_type();
+        assign_weight();
+
 
         System.out.println("Waiting for 'ready' message from all launched proceseses");
         int ReadysReceived = 0;
@@ -51,6 +68,15 @@ public class Tester {
             System.out.println("Exiting.");
             kill_processes(processes);
         }
+
+        // send type and weight to subprocess
+        for (int i = 0; i<num_processes;i++){
+            connectionManager.sendMessages(i,"type",Boolean.toString(type[i]));
+            connectionManager.sendMessages(i, "weight", Arrays.toString(weight));
+
+            System.out.println("send type_weight to subprocess");
+        }
+
 
         //Start agreement processes
         stopwatch.start();
@@ -117,6 +143,37 @@ public class Tester {
 
 
 
+    }
+
+    private static void assign_weight(){
+
+
+
+
+
+
+    }
+
+    private static void assign_type(){
+        File file = new File(cp);
+        BufferedReader reader = null;
+        int count = 0;
+        try{
+            reader = new BufferedReader(new FileReader(file));
+            String tmpDouble;
+            while((tmpDouble = reader.readLine())!=null){
+                failure_probability[count] = Double.parseDouble(tmpDouble);
+                if( Math.random()>failure_probability[count]){
+                    type[count] = true;
+                }
+                else
+                    type[count] = false;
+                count++;
+            }
+            reader.close();
+        }catch (IOException e){
+            System.out.println("error from assign_type :" + e);
+        }
     }
 
     private static void launch_processes(){

@@ -13,6 +13,7 @@ public class KingWBAP implements Runnable  {
     private volatile double[] w;
     private volatile int anchor;
     protected ArrayList<ArrayList<String>> Queue;
+    private boolean type;
 
     public KingWBAP(int ID, int Process){
         this.myId = ID;
@@ -66,6 +67,19 @@ public class KingWBAP implements Runnable  {
         else if(rcvMsg.retTag().equals("start")){
             start();
         }
+        else if(rcvMsg.retTag().equals("type")){
+            this.type = Boolean.parseBoolean(rcvMsg.retInfo());
+        }
+        else if(rcvMsg.retTag().equals("weight")){
+            String weight = rcvMsg.retInfo();
+            weight = weight.substring(0,weight.length()-1);
+            int count = 0;
+            for (String tmp:weight.split(",")){
+                this.w[count] = Double.parseDouble(tmp);
+                count++;
+            }
+
+        }
 
     }
 
@@ -80,7 +94,7 @@ public class KingWBAP implements Runnable  {
         new Thread(this).start();
     }
     public void run(){
-
+        if(type){
         for(int i = 0; i<anchor; i++){
             double s0 = 0.0, s1 =0.0, su = 0.0;
             double myWeight = w[myId];   //initialize w[myId];
@@ -204,7 +218,21 @@ public class KingWBAP implements Runnable  {
         }
 
         System.out.println("Final V = "+V);
+
         decide(V);
+        }
+        else
+        {
+            int i = (int)Math.random()*2;
+            falty_process(i);
+
+        }
+
     }
+
+    private static void falty_process(int i){
+
+    }
+
 
 }
