@@ -72,12 +72,12 @@ public class KingWBAP implements Runnable  {
         }
         else if(rcvMsg.retTag().equals("type")){
             this.type = Boolean.parseBoolean(rcvMsg.retInfo());
-            System.out.println(" test");
-            System.out.println(myId);
-            if(type)
-                System.out.println(myId+" test !!");
-            else
-                System.out.println(myId+ "test 22");
+         //   System.out.println(" test");
+           // System.out.println(myId);
+           // if(type)
+             //   System.out.println(myId+" test !!");
+           // else
+             //   System.out.println(myId+ "test 22");
         }
         else if(rcvMsg.retTag().equals("weight")){
             String weight = rcvMsg.retInfo();
