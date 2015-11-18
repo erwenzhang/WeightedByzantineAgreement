@@ -1,5 +1,6 @@
 package WeightedByzantineAgreement.algorithm;
 
+import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,9 +56,11 @@ public class KingWBAP implements Runnable  {
 
 
     public void procMsg(String line){
-        System.out.println(line);
+       // System.out.println("test");
+        System.out.println("test "+line);
         Messages rcvMsg = new Messages();
         rcvMsg.parseMsg(line);
+
         if(rcvMsg.retTag().equals("V") || rcvMsg.retTag().equals("KingValue")){
             synchronized(Queue.get(rcvMsg.retSrcId())){
                 Queue.get(rcvMsg.retSrcId()).add(rcvMsg.retInfo());
@@ -69,6 +72,12 @@ public class KingWBAP implements Runnable  {
         }
         else if(rcvMsg.retTag().equals("type")){
             this.type = Boolean.parseBoolean(rcvMsg.retInfo());
+            System.out.println(" test");
+            System.out.println(myId);
+            if(type)
+                System.out.println(myId+" test !!");
+            else
+                System.out.println(myId+ "test 22");
         }
         else if(rcvMsg.retTag().equals("weight")){
             String weight = rcvMsg.retInfo();
@@ -94,8 +103,12 @@ public class KingWBAP implements Runnable  {
         new Thread(this).start();
     }
     public void run(){
-        if(type){
+       // System.out.println("it make sense");
+      //  System.out.print(type);
+        if(type == true){
+
         for(int i = 0; i<anchor; i++){
+
             double s0 = 0.0, s1 =0.0, su = 0.0;
             double myWeight = w[myId];   //initialize w[myId];
             MessageTrans trans = new MessageTrans(myId,numProc);
@@ -223,15 +236,61 @@ public class KingWBAP implements Runnable  {
         }
         else
         {
+
             int i = (int)Math.random()*2;
+            System.out.println("faulty!!! "+ i);
             falty_process(i);
 
         }
 
     }
 
-    private static void falty_process(int i){
+    private void falty_process(int i){
+        MessageTrans trans = new MessageTrans(myId,numProc);
+        if(i == 1){
+            int sendMsg = 1;
+            if(w[myId] > 0){
+                for(int j = 0; j < numProc; j++){
+                    trans.sendMessages(j,"V",Integer.toString(sendMsg));
+                }
+            }
+            if(w[myId] > 0){
+                for(int j = 0; j < numProc; j++){
+                    trans.sendMessages(j,"V",Integer.toString(sendMsg));
+                }
+            }
 
+            if(w[myId] > 0){
+                for(int j = 0; j < numProc; j++){
+                    trans.sendMessages(j,"KingValue",Integer.toString(sendMsg));
+                }
+            }
+
+        }else if(i == 2){
+
+            Random random = new Random();
+            this.V=Integer.toString(random.nextInt(2));
+
+            if(w[myId] > 0){
+                for(int j = 0; j < numProc; j++){
+                    trans.sendMessages(j,"V",this.V);
+                }
+            }
+
+            this.V=Integer.toString(random.nextInt(2));
+            if(w[myId] > 0){
+                for(int j = 0; j < numProc; j++){
+                    trans.sendMessages(j,"V",this.V);
+                }
+            }
+
+            this.V=Integer.toString(random.nextInt(2));
+            if(w[myId] > 0){
+                for(int j = 0; j < numProc; j++){
+                    trans.sendMessages(j,"KingValue",this.V);
+                }
+            }
+        }
     }
 
 

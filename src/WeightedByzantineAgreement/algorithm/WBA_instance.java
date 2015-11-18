@@ -63,7 +63,7 @@ public class WBA_instance {
 
 
                     Socket s = listener.accept();
-                  //  s.setSoTimeout(15*1000);
+                    s.setSoTimeout(3*1000);
                     BufferedReader dIn = new BufferedReader(
                             new InputStreamReader(s.getInputStream()));
                     PrintWriter dOut = new PrintWriter(s.getOutputStream());
@@ -103,7 +103,7 @@ public class WBA_instance {
             while(s == null ){
                 try{
                     s = new Socket(local_host, 8000 + i);
-                   // s.setSoTimeout(15*1000);
+                    s.setSoTimeout(3*1000);
                     PrintWriter dOut = new PrintWriter(s.getOutputStream());
                     BufferedReader dIn = new BufferedReader(new
                             InputStreamReader(s.getInputStream()));

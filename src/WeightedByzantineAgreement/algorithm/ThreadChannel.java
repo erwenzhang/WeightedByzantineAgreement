@@ -34,9 +34,9 @@ public class ThreadChannel extends Thread {
             {
                 e.printStackTrace();
                 if(count%2 == 1)
-                str = Integer.toString(fromProcessId) + " "+"V" +" "+"0";
+                    str = Integer.toString(fromProcessId) + " "+"V" +" "+"0";
                 else
-                str = Integer.toString(fromProcessId) + " "+"QueenValue" +" "+"0";
+                    str = Integer.toString(fromProcessId) + " "+"QueenValue" +" "+"0";
                 msg_agreement.procMsg(str);
 
             }

@@ -12,13 +12,14 @@ import java.util.Arrays;
  */
 public class Tester {
 
-    private static final int num_processes = 9;
+    private static final int num_processes = 10;
+    private static int correct_pro;
     private static String current_dir = "/Users/apple/Documents/myjava/QueenWeightedByzantineAgreement/bin";
     private static String cp ="/Users/apple/Documents/myjava/QueenWeightedByzantineAgreement/failure_probability.txt";
 
     private static int tester_port = 7999;
     private static int wait_max = 30;
-    private static int[] weight;
+    private static double[] weight;
     private static boolean[] type;
     private static double[] failure_probability;
 
@@ -28,7 +29,7 @@ public class Tester {
 
     public static void main(String[] args) throws Exception{
          processes = new Process[num_processes];
-         weight = new int[num_processes];
+         weight = new double[num_processes];
         type = new boolean[num_processes];
         failure_probability = new double[num_processes];
 
@@ -89,7 +90,7 @@ public class Tester {
         System.out.println("Waiting for decide messages from all launched processes.");
         int DecideReceived =  0;
         ArrayList<Integer> decisions = new ArrayList<Integer>();
-        while((DecideReceived<num_processes)){
+        while((DecideReceived<correct_pro)){
             MessageTest msg = connectionManager.getMessage();
             if(msg!=null){
                 if(msg.retTag().equals("decide")){
@@ -101,7 +102,7 @@ public class Tester {
         }
         stopwatch.stop();
 
-        if (DecideReceived == num_processes) {
+        if (DecideReceived == correct_pro) {
             System.out.println("Received 'decide' from all processes.");
             System.out.println("Agreement took " + stopwatch.getElapsedTime() + " ms");
         }
@@ -146,29 +147,49 @@ public class Tester {
     }
 
     private static void assign_weight(){
-
-
-
-
-
-
+        double []tmp = new double[num_processes];
+        for(int i = 0; i<num_processes; i++){
+            tmp[i]= 1.0/failure_probability[i];
+        }
+        double  sum = 0.0 ;
+        for(int i = 0; i<num_processes; i++){
+            sum += tmp[i];
+        }
+        for(int i = 0; i<num_processes; i++){
+            weight[i]= (1.0/sum)*tmp[i];
+        }
     }
 
     private static void assign_type(){
         File file = new File(cp);
         BufferedReader reader = null;
+        correct_pro = 0;
+
         int count = 0;
         try{
             reader = new BufferedReader(new FileReader(file));
-            String tmpDouble;
-            while((tmpDouble = reader.readLine())!=null){
-                failure_probability[count] = Double.parseDouble(tmpDouble);
-                if( Math.random()>failure_probability[count]){
-                    type[count] = true;
+
+            String tmpDouble = reader.readLine();
+            tmpDouble = tmpDouble.substring(1,tmpDouble.length()-1);
+            if(tmpDouble!=null){
+                for (String tmp:tmpDouble.split(",")){
+                    if(Double.parseDouble(tmp)<0)
+                    failure_probability[count] =0 ;
+                    else
+                    failure_probability[count] =Double.parseDouble(tmp);
+
+                    System.out.println(failure_probability[count]);
+                    if( Math.random()>failure_probability[count]){
+                        type[count] = true;
+                        correct_pro++;
+                    }
+                    else
+                        type[count] = false;
+                    System.out.println(type[count]);
+                    count++;
                 }
-                else
-                    type[count] = false;
-                count++;
+             //   failure_probability[count] = Double.parseDouble(tmpDouble);
+
             }
             reader.close();
         }catch (IOException e){

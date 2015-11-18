@@ -51,7 +51,7 @@ public class Queen_WBA implements Runnable {
         }
         else if(rcvMsg.retTag().equals("weight")){
             String weight = rcvMsg.retInfo();
-            weight = weight.substring(0,weight.length()-1);
+            weight = weight.substring(1,weight.length()-1);
             int count = 0;
             for (String tmp:weight.split(",")){
                 this.w[count] = Double.parseDouble(tmp);
@@ -191,8 +191,42 @@ public class Queen_WBA implements Runnable {
         }
     }
 
-    private static void falty_process(int i){
+    private void falty_process(int i) {
 
+        MessageTrans trans = new MessageTrans(myId, numProc);
+        if (i == 1) {
+            int sendMsg = 1;
+            if (w[myId] > 0) {
+                for (int j = 0; j < numProc; j++) {
+                    trans.sendMessages(j, "V", Integer.toString(sendMsg));
+                }
+                if (w[myId] > 0) {
+                    for (int j = 0; j < numProc; j++) {
+                        trans.sendMessages(j, "QueenValue", Integer.toString(sendMsg));
+                    }
+
+                }
+
+            } else if (i == 2) {
+                Random random = new Random();
+                this.V = Integer.toString(random.nextInt(2));
+
+                if (w[myId] > 0) {
+                    for (int j = 0; j < numProc; j++) {
+                        trans.sendMessages(j, "V", Integer.toString(sendMsg));
+                    }
+                }
+
+                this.V = Integer.toString(random.nextInt(2));
+                if (w[myId] > 0) {
+                    for (int j = 0; j < numProc; j++) {
+                        trans.sendMessages(j, "QueenValue", Integer.toString(sendMsg));
+                    }
+                }
+            }
+
+
+        }
     }
 
 }
