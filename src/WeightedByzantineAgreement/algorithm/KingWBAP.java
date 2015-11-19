@@ -28,8 +28,8 @@ public class KingWBAP implements Runnable  {
         Random rand = new Random();
         this.V = Integer.toString(rand.nextInt(2));
 
-        this.assignW();
-        this.anchor = assignAnchor();
+  //      this.assignW();
+
 
     }
 
@@ -45,19 +45,21 @@ public class KingWBAP implements Runnable  {
         double[] tmp_w =w.clone() ;
         Arrays.sort(tmp_w);
         for(int i = numProc-1; i > -1 ; i--){
+            System.out.println("anchor "+tmp_w[i]);
             bound = bound + tmp_w[i];
             if(bound > 1.0/3.0){
                 Anchor= numProc - i;
                 break;
             }
         }
+        System.out.println("anchor "+Anchor);
         return Anchor;
     }
 
 
     public void procMsg(String line){
        // System.out.println("test");
-        System.out.println("test "+line);
+        System.out.println("my id is:"+myId+" "+line);
         Messages rcvMsg = new Messages();
         rcvMsg.parseMsg(line);
 
@@ -81,13 +83,18 @@ public class KingWBAP implements Runnable  {
         }
         else if(rcvMsg.retTag().equals("weight")){
             String weight = rcvMsg.retInfo();
-            weight = weight.substring(0,weight.length()-1);
+          //  System.out.println("my weight 1: "+weight);
+            weight = weight.substring(1,weight.length()-1);
             int count = 0;
+
+          //  System.out.println("my weight 2:"+weight);
             for (String tmp:weight.split(",")){
+                System.out.println(tmp);
                 this.w[count] = Double.parseDouble(tmp);
                 count++;
+               System.out.println("myweight "+ (count-1) + " "+w[count-1]);
             }
-
+            this.anchor = assignAnchor();
         }
 
     }
@@ -106,6 +113,7 @@ public class KingWBAP implements Runnable  {
        // System.out.println("it make sense");
       //  System.out.print(type);
         if(type == true){
+
 
         for(int i = 0; i<anchor; i++){
 
@@ -236,11 +244,12 @@ public class KingWBAP implements Runnable  {
         }
         else
         {
-
-            int i = (int)Math.random()*2;
-            System.out.println("faulty!!! "+ i);
-            falty_process(i);
-
+            Random random = new Random();
+            int j = random.nextInt(3);
+            for(int i = 0; i<anchor; i++) {
+                System.out.println("faulty!!! " + j);
+                falty_process(j);
+            }
         }
 
     }
@@ -249,47 +258,56 @@ public class KingWBAP implements Runnable  {
         MessageTrans trans = new MessageTrans(myId,numProc);
         if(i == 1){
             int sendMsg = 1;
-            if(w[myId] > 0){
-                for(int j = 0; j < numProc; j++){
-                    trans.sendMessages(j,"V",Integer.toString(sendMsg));
+           // if(w[myId] > 0) {
+                for (int j = 0; j < numProc; j++) {
+                   // trans.sendMessages(j, "V", Integer.toString(sendMsg));
+                    trans.sendMessages(j, "V", Integer.toString(sendMsg%2));
+                    sendMsg++;
                 }
-            }
-            if(w[myId] > 0){
+          //  }
+         //   if(w[myId] > 0){
                 for(int j = 0; j < numProc; j++){
-                    trans.sendMessages(j,"V",Integer.toString(sendMsg));
+                  //  trans.sendMessages(j,"V",Integer.toString(sendMsg));
+                    trans.sendMessages(j, "V", Integer.toString(sendMsg%2));
+                    sendMsg++;
                 }
-            }
+        //    }
 
-            if(w[myId] > 0){
+        //    if(w[myId] > 0){
                 for(int j = 0; j < numProc; j++){
-                    trans.sendMessages(j,"KingValue",Integer.toString(sendMsg));
+                    trans.sendMessages(j,"KingValue",Integer.toString(sendMsg%2));
+                    sendMsg++;
+
                 }
-            }
+        //    }
 
         }else if(i == 2){
 
             Random random = new Random();
-            this.V=Integer.toString(random.nextInt(2));
 
-            if(w[myId] > 0){
+
+          //  if(w[myId] > 0){
                 for(int j = 0; j < numProc; j++){
+                    this.V=Integer.toString(random.nextInt(2));
                     trans.sendMessages(j,"V",this.V);
                 }
-            }
+          //  }
 
-            this.V=Integer.toString(random.nextInt(2));
-            if(w[myId] > 0){
+          //  this.V=Integer.toString(random.nextInt(2));
+         //   if(w[myId] > 0){
                 for(int j = 0; j < numProc; j++){
+                    this.V=Integer.toString(random.nextInt(2));
                     trans.sendMessages(j,"V",this.V);
                 }
-            }
+        //    }
 
-            this.V=Integer.toString(random.nextInt(2));
-            if(w[myId] > 0){
+        //    this.V=Integer.toString(random.nextInt(2));
+         //   if(w[myId] > 0){
                 for(int j = 0; j < numProc; j++){
+                    this.V=Integer.toString(random.nextInt(2));
                     trans.sendMessages(j,"KingValue",this.V);
                 }
-            }
+        //    }
         }
     }
 

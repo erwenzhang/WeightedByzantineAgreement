@@ -7,11 +7,11 @@ import java.net.SocketTimeoutException;
  */
 public class ThreadChannel extends Thread {
     int fromProcessId;
-   // Queen_WBA msg_agreement;
-    KingWBAP msg_agreement;
+    Queen_WBA msg_agreement;
+  //  KingWBAP msg_agreement;
     int hostId;
 
-    public ThreadChannel(int hostId, int fromProcessId, KingWBAP msg_agreement){
+    public ThreadChannel(int hostId, int fromProcessId, Queen_WBA msg_agreement){
         this.fromProcessId = fromProcessId;
         this.msg_agreement = msg_agreement;
         this.hostId = hostId;
@@ -32,7 +32,7 @@ public class ThreadChannel extends Thread {
 
             }catch (SocketTimeoutException e)
             {
-                e.printStackTrace();
+               // System.out.println("wenwen "+count);
                 if(count%2 == 1)
                     str = Integer.toString(fromProcessId) + " "+"V" +" "+"0";
                 else

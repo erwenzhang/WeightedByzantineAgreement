@@ -34,7 +34,7 @@ public class Queen_WBA implements Runnable {
     }
 
     public void procMsg(String line){
-        System.out.println(line);
+        System.out.println("my id is:"+myId+" "+line);
         Messages rcvMsg = new Messages();
         rcvMsg.parseMsg(line);
         if(rcvMsg.retTag().equals("V")|| rcvMsg.retTag().equals("QueenValue")){
@@ -57,6 +57,7 @@ public class Queen_WBA implements Runnable {
                 this.w[count] = Double.parseDouble(tmp);
                 count++;
             }
+            this.anchor = assignAnchor();
 
         }
 
@@ -75,6 +76,7 @@ public class Queen_WBA implements Runnable {
                 break;
             }
         }
+        System.out.println("anchor "+Anchor);
         return Anchor;
     }
 
@@ -185,9 +187,12 @@ public class Queen_WBA implements Runnable {
 
         else
         {
-            int i = (int)Math.random()*2;
-            falty_process(i);
-
+            Random random = new Random();
+            int j = random.nextInt(3);
+            for(int i = 0; i<anchor; i++) {
+                System.out.println("faulty!!! " + j);
+                falty_process(j);
+            }
         }
     }
 
@@ -198,35 +203,41 @@ public class Queen_WBA implements Runnable {
             int sendMsg = 1;
             if (w[myId] > 0) {
                 for (int j = 0; j < numProc; j++) {
-                    trans.sendMessages(j, "V", Integer.toString(sendMsg));
+                    trans.sendMessages(j, "V", Integer.toString(sendMsg%2));
+                    sendMsg++;
                 }
                 if (w[myId] > 0) {
                     for (int j = 0; j < numProc; j++) {
-                        trans.sendMessages(j, "QueenValue", Integer.toString(sendMsg));
+                        trans.sendMessages(j, "QueenValue", Integer.toString(sendMsg%2));
+                        sendMsg++;
                     }
 
                 }
 
-            } else if (i == 2) {
+            }
+        }
+          else if (i == 2) {
                 Random random = new Random();
-                this.V = Integer.toString(random.nextInt(2));
+
 
                 if (w[myId] > 0) {
                     for (int j = 0; j < numProc; j++) {
-                        trans.sendMessages(j, "V", Integer.toString(sendMsg));
+                        this.V = Integer.toString(random.nextInt(2));
+                        trans.sendMessages(j, "V", this.V);
                     }
                 }
 
-                this.V = Integer.toString(random.nextInt(2));
+             //   this.V = Integer.toString(random.nextInt(2));
                 if (w[myId] > 0) {
                     for (int j = 0; j < numProc; j++) {
-                        trans.sendMessages(j, "QueenValue", Integer.toString(sendMsg));
+                        this.V = Integer.toString(random.nextInt(2));
+                        trans.sendMessages(j, "QueenValue", this.V);
                     }
                 }
             }
 
 
         }
-    }
+
 
 }

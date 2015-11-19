@@ -73,9 +73,10 @@ public class Tester {
         // send type and weight to subprocess
         for (int i = 0; i<num_processes;i++){
             connectionManager.sendMessages(i,"type",Boolean.toString(type[i]));
-            connectionManager.sendMessages(i, "weight", Arrays.toString(weight));
+            String sending_weight = Arrays.toString(weight).replaceAll("\\s+","");
+            connectionManager.sendMessages(i, "weight", sending_weight);
 
-            System.out.println("send type_weight to subprocess");
+            System.out.println("send type_weight to subprocess  " + sending_weight);
         }
 
 
@@ -103,7 +104,7 @@ public class Tester {
         stopwatch.stop();
 
         if (DecideReceived == correct_pro) {
-            System.out.println("Received 'decide' from all processes.");
+            System.out.println("Received 'decide' from all " + correct_pro +" processes.");
             System.out.println("Agreement took " + stopwatch.getElapsedTime() + " ms");
         }
         else {
@@ -147,6 +148,7 @@ public class Tester {
     }
 
     private static void assign_weight(){
+        double fail_weight  = 0;
         double []tmp = new double[num_processes];
         for(int i = 0; i<num_processes; i++){
             tmp[i]= 1.0/failure_probability[i];
@@ -157,7 +159,11 @@ public class Tester {
         }
         for(int i = 0; i<num_processes; i++){
             weight[i]= (1.0/sum)*tmp[i];
+            if(!type[i]){
+                fail_weight = fail_weight + weight[i];
+            }
         }
+        System.out.println("fail_weight "+fail_weight);
     }
 
     private static void assign_type(){
@@ -174,7 +180,10 @@ public class Tester {
             if(tmpDouble!=null){
                 for (String tmp:tmpDouble.split(",")){
                     if(Double.parseDouble(tmp)<0)
-                    failure_probability[count] =0 ;
+                    failure_probability[count] =0.01 ;
+                    else if(Double.parseDouble(tmp)>=1){
+                        failure_probability[count] = 0.99;
+                    }
                     else
                     failure_probability[count] =Double.parseDouble(tmp);
 

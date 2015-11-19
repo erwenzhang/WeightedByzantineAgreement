@@ -48,9 +48,9 @@ public class WBA_instance {
     public static void main(String[] args) throws Exception{
       //  System.out.println("before subprocesses started "+args[0]+" "+args[1]+" "+args[2]);
         WBA_instance wba_instance  = new WBA_instance(Integer.parseInt(args[0]),Integer.parseInt(args[1]),Integer.parseInt(args[2]));
-     //   Queen_WBA msg_agreement = new Queen_WBA(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+        Queen_WBA msg_agreement = new Queen_WBA(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
        // int flag = 0;
-        KingWBAP msg_agreement = new KingWBAP(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
+       // KingWBAP msg_agreement = new KingWBAP(Integer.parseInt(args[0]),Integer.parseInt(args[1]));
 
 
 

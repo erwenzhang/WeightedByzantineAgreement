@@ -7,9 +7,9 @@ import java.net.SocketTimeoutException;
  */
 public class ToTesterChannel extends Thread {
     private int process_id;
-    //private Queen_WBA msg_agreement;
-    private KingWBAP msg_agreement;
-    public ToTesterChannel(int process_id,KingWBAP msg_agreement){
+    private Queen_WBA msg_agreement;
+  //  private KingWBAP msg_agreement;
+    public ToTesterChannel(int process_id,Queen_WBA msg_agreement){
         this.process_id = process_id;
         this.msg_agreement = msg_agreement;
     }
